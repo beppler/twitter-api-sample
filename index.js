@@ -12,7 +12,6 @@ async function main() {
     });
 
     try {
-
         const user = await baseClient.v1.updateAccountProfile({
             name: 'Synapse Tech SOCi',
             description: 'Synapse Tech SOCi (bio)',
