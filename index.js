@@ -51,7 +51,9 @@ async function main() {
         const imageResponse = await client.post(
             'account/update_profile_image.json',
             {
-                image: image.data.toString('base64')
+                image: image.data.toString('base64'),
+                include_entities: false, 
+                skip_status: true
             }
         );
 
