@@ -33,20 +33,20 @@ async function main() {
 
         console.log(JSON.stringify(updatedUser, null, '  '));
 
-        // const axiosInstance = axios.create({
-        //     httpsAgent: new https.Agent({  
-        //       rejectUnauthorized: false
-        //     })
-        // });
+        const axiosInstance = axios.create({
+            httpsAgent: new https.Agent({  
+              rejectUnauthorized: false
+            })
+        });
 
-        // const image = await axiosInstance.get(
-        //     'https://local.meetsoci.com/uploads/projects/photos/photo_upload_635a8cb8e87ae-2022-10-27.png',
-        //     { responseType: 'arraybuffer' }
-        // );
+        const image = await axiosInstance.get(
+            'https://local.meetsoci.com/uploads/projects/photos/photo_upload_635a8cb8e87ae-2022-10-27.png',
+            { responseType: 'arraybuffer' }
+        );
 
-        const image = {
-            data: await fs.readFile('synapse-alternate.png')
-        };
+        // const image = {
+        //     data: await fs.readFile('synapse-alternate.png')
+        // };
 
         const imageResponse = await client.post(
             'account/update_profile_image.json',
