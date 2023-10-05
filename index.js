@@ -1,52 +1,74 @@
-const twitter = require('twitter-api-v2');
+const Twitter = require('twitter');
 const axios = require('axios');
 const https = require('https');
-const fspromises = require('fs/promises');
+const fs = require('fs/promises');
 
 async function main() {
-    const baseClient = new twitter.TwitterApi({
-        appKey: process.env.APPKEY,
-        appSecret: process.env.APPSECRET,
-        accessToken: process.env.ACCESSTOKEN,
-        accessSecret: process.env.ACCESSSECRET,
+    const client = new Twitter({
+        consumer_key: process.env.APPKEY,
+        consumer_secret: process.env.APPSECRET,
+        access_token_key: process.env.ACCESSTOKEN,
+        access_token_secret: process.env.ACCESSSECRET,
     });
 
-    try {
-        const user = await baseClient.v1.updateAccountProfile({
-            name: 'Synapse Tech SOCi',
-            description: 'Synapse Tech SOCi (bio)',
-            location: 'Curitiba, Paraná, Brasil',
-            url: 'https://example.com/synapse'
-        });
 
-        //const user = await baseClient.currentUser();
-        //const user = await baseClient.v1.user({ screen_name: 'synapsetechsoci' });
+    try {
+        const users = await client.get(
+            'users/lookup.json', 
+            {user_id: '1404876754548838406', include_entities: true}
+        );
+
+        const user = users[0];
 
         console.log(JSON.stringify(user, null, '  '));
 
-        // const image = await fspromises.open('synapse-alternate.png');
-
-        const axiosInstance = axios.create({
-            httpsAgent: new https.Agent({  
-              rejectUnauthorized: false
-            })
-        });
-
-        const image = await axiosInstance.get(
-            'https://local.meetsoci.com/uploads/projects/photos/photo_upload_635a8cb8e87ae-2022-10-27.png',
-            { responseType: 'arraybuffer' }
+        const updatedUser = await client.post(
+            'account/update_profile.json',
+            {
+                name: 'Synapse Tech SOCi',
+                description: 'Synapse Tech SOCi (bio)',
+                location: 'Curitiba, Paraná, Brasil',
+                url: 'https://example.com/synapse'
+            }
         );
 
-        const response = await baseClient.v1.updateAccountProfileImage(image.data);
+        console.log(JSON.stringify(updatedUser, null, '  '));
 
-        // image.close();
+        // const axiosInstance = axios.create({
+        //     httpsAgent: new https.Agent({  
+        //       rejectUnauthorized: false
+        //     })
+        // });
 
-        console.log(JSON.stringify(response, null, '  '));
+        // const image = await axiosInstance.get(
+        //     'https://local.meetsoci.com/uploads/projects/photos/photo_upload_635a8cb8e87ae-2022-10-27.png',
+        //     { responseType: 'arraybuffer' }
+        // );
+
+        const image = {
+            data: await fs.readFile('synapse-alternate.png')
+        };
+
+        const imageResponse = await client.post(
+            'account/update_profile_image.json',
+            {
+                image: image.data.toString('base64')
+            }
+        );
+
+        console.log(JSON.stringify(imageResponse, null, '  '));
 
     } catch (error) {
-        console.log(error.message);
-        console.log(JSON.stringify(error));
+        if (error instanceof Array) {
+            console.log(JSON.stringify(error, null, '  '));
+        } else {
+            console.log(JSON.stringify(error, Object.getOwnPropertyNames(error), '  '));
+        }
+        
     }
 }
 
-main();
+(async function () {
+    await main();
+})();
+
