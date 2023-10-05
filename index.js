@@ -1,18 +1,17 @@
-const Twitter = require('twitter');
-const axios = require('axios');
-const https = require('https');
-const fs = require('fs/promises');
+import Twitter from 'twitter';
+import axios from 'axios';
+import https from 'https';
+import fs from 'fs/promises';
 
 async function main() {
-    const client = new Twitter({
-        consumer_key: process.env.APPKEY,
-        consumer_secret: process.env.APPSECRET,
-        access_token_key: process.env.ACCESSTOKEN,
-        access_token_secret: process.env.ACCESSSECRET,
-    });
-
-
     try {
+        const client = new Twitter({
+            consumer_key: process.env.APPKEY,
+            consumer_secret: process.env.APPSECRET,
+            access_token_key: process.env.ACCESSTOKEN,
+            access_token_secret: process.env.ACCESSSECRET,
+        });
+
         const users = await client.get(
             'users/lookup.json', 
             {user_id: '1404876754548838406', include_entities: true}
@@ -68,7 +67,5 @@ async function main() {
     }
 }
 
-(async function () {
-    await main();
-})();
+await main();
 
