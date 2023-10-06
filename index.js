@@ -1,7 +1,6 @@
 import Twitter from 'twitter';
 import axios from 'axios';
 import https from 'https';
-import fs from 'fs/promises';
 
 async function main() {
     try {
